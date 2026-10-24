@@ -124,7 +124,7 @@ ASP.NET Core Identity's standard tables, renamed to snake_case:
 | `xmin` | (system column) | Concurrency token (M10) |
 
 Constraints and indexes:
-- `CHECK (end_time IS NULL OR end_time > start_time)`: entries stay within one day.
+- `CHECK (end_time IS NULL OR end_time > start_time)`: entries stay within one day. Rounding never breaks this (03, 4.1, C1), and a timer across the autumn clock change is saved as described in 03, 4.1 (C5).
 - **Partial unique index `(user_id) WHERE end_time IS NULL`**: at most one running timer per user. Dropping this index is all it takes to allow several timers later (01, 3.2).
 - Index `(user_id, entry_date)` for day, month and year reports.
 - Index `(task_id)`.

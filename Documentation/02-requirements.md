@@ -1,6 +1,6 @@
 # 02 · Requirements
 
-> **Status: approved** · Last updated: 2026-10-22
+> **Status: approved** · Last updated: 2026-10-24
 >
 > Turns the approved [01 Vision and scope](01-vision-and-scope.md) into user stories with acceptance criteria. Only the project owner's decisions are written here.
 
@@ -145,6 +145,8 @@
 - Rounding is applied to **each entry** separately, not to daily totals.
 - Rounding **changes the stored end time**. The start time is kept as entered.
   - *Example:* rounding up to 15 minutes, an entry 09:00–09:07 is saved as 09:00–09:15.
+- If rounding would leave the entry **zero length or shorter**, the entry is **saved unrounded**.
+  - *Example:* rounding down to 15 minutes, an entry 09:00–09:07 stays 09:00–09:07.
 - Rounding is applied **when an entry is saved**: when the timer stops, or when an entry is added or edited.
 - Changing a client's rounding setting **does not change entries already saved**.
 

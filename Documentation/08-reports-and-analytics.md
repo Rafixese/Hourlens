@@ -11,7 +11,7 @@
 | R14 | Reports are **calculated live** on every request from the stored data. Nothing is pre-computed or cached in the database |
 | — | All maths runs on the **server** (06, P9). The frontend formats and draws |
 | R3 | The **running timer counts live**: today's hours and earnings include it, and the frontend ticks it up between refreshes |
-| R12 | **Money rounding:** minutes are totalled per rate period, multiplied by the hourly rate, and rounded to 2 decimals **once per total**. Individual entries are never rounded to money first |
+| R12 | **Money rounding:** entry durations in seconds are totalled per rate period, converted to hours (seconds ÷ 3600, as a decimal), multiplied by the hourly rate, and rounded to 2 decimals **once per total**. Individual entries are never rounded to money first |
 | — | Money is always shown **per currency**, never converted (03, 4.7) |
 | R13 | A client **without a rate** earns 0 and shows a **"Set a rate"** hint linking to its Rates tab |
 | R11 | **Hours** are shown clock-style, `125:00`, in all Insights tables, tiles and charts. Decimal hours (`7.5 h`) are used only where decimals read better, such as quota settings |

@@ -1,6 +1,6 @@
 # 03 · Domain model and glossary
 
-> **Status: approved** · Last updated: 2026-10-22
+> **Status: approved** · Last updated: 2026-10-24
 >
 > The entities, their relationships and the calculation rules behind [01 Vision and scope](01-vision-and-scope.md) and [02 Requirements](02-requirements.md). Only the project owner's decisions are written here.
 >
@@ -110,6 +110,9 @@ erDiagram
 - *Example:* an entry 08:00–10:00 recorded in Poland still shows as 08:00–10:00 after the user moves to the US and changes their time zone.
 - The timer stops automatically at midnight in the user's time zone.
 - Rounding (per client) is applied to the end time when an entry is saved. Changing the setting later doesn't change saved entries.
+- If rounding would leave an entry zero length or shorter, the entry is saved **unrounded** (C1).
+- An entry's **duration** is its end time minus its start time, **in seconds**. Totals add up seconds; hours and money are calculated from the totals (C2).
+- **Autumn clock change:** if a timer is stopped and the local end time isn't after its start (only possible when the clocks go back), the end time is saved as the **last second before the change** (02:59:59 in Poland). The user can edit it afterwards (C5).
 
 ### 4.2 Rate lookup
 - An entry uses the **rate period that covers its date**: the client's custom periods if the client uses a custom rate, otherwise the user's default periods.
@@ -122,7 +125,7 @@ A day is a **quota workday** for a client when all of these are true:
 - it isn't a holiday
 - it is inside one of the client's quota periods
 
-A **time off day** is a quota workday that is covered by the client's time off. Non-workdays and holidays inside a time off range don't count.
+A **time off day** is a quota workday that is covered by the client's time off. For a client **without a quota**, it is any of the user's workdays that isn't a holiday (C3). Non-workdays and holidays inside a time off range don't count.
 
 ### 4.4 Expected hours per day
 - **Daily quota:** the quota hours.
@@ -163,7 +166,7 @@ A **time off day** is a quota workday that is covered by the client's time off. 
 ### 4.8 Predicted salary
 - Only for clients **with a quota**. Clients without a quota have no prediction.
 - The app shows **two predictions side by side**:
-  - **At normal pace:** salary so far + expected hours for the remaining quota workdays × rate + planned paid time off for the rest of the month. Missing hours from earlier days are not made up.
+  - **At normal pace:** salary so far + expected hours for the remaining quota workdays **that aren't time off days** × rate + planned paid time off for the rest of the month. A planned leave day is paid only as time off, never also as work (C4). Missing hours from earlier days are not made up.
   - **If you catch up:** as above, plus the hours you're currently behind quota × rate. If you're at or above quota, it equals the normal pace prediction.
 - The remaining quota workdays **include today**. Hours already worked today are in salary so far, so today only adds the hours still missing to reach today's expected hours.
 

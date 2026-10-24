@@ -11,7 +11,7 @@
 | P2 | Base path **`/api/v1`** |
 | P3 | Plural nouns in kebab-case (`/time-entries`), nested where ownership is natural (`/clients/{id}/projects`). JSON fields in **camelCase** |
 | P4 | Errors use **Problem Details** (RFC 9457) with per-field validation errors |
-| P5 | Dates `"2026-10-24"`, times `"08:00:00"`, UTC moments ISO 8601 with `Z` (`"2026-10-24T06:00:00Z"`). Durations in **minutes** (integers) |
+| P5 | Dates `"2026-10-24"`, times `"08:00:00"`, UTC moments ISO 8601 with `Z` (`"2026-10-24T06:00:00Z"`). Durations of entries and totals in **seconds** (integers); the frontend formats them as `7:30`. Quota and time off hour amounts stay in **minutes** (05, M7) |
 | P6 | Money is a **string** with two decimals (`"100.50"`) plus a separate `currency` field (`"PLN"`) |
 | P7 | Lists of entries, time off and holidays are loaded **by date range** (`from`, `to`, inclusive). No page-based pagination |
 | P9 | **All calculations happen on the server.** The frontend only displays results |
@@ -99,7 +99,7 @@ There is no "create task" endpoint. Tasks are created from entry titles (03, sec
 
 | Method | Path | Purpose | Story |
 |--------|------|---------|-------|
-| GET | `/time-entries?from=&to=` | Entries in a date range, with `clientId`, `projectId`, `taskTitle`, `durationMinutes` | US-ENTRY-05 |
+| GET | `/time-entries?from=&to=` | Entries in a date range, with `clientId`, `projectId`, `taskTitle`, `durationSeconds` | US-ENTRY-05 |
 | POST | `/time-entries` | `projectId`, `title`, `date`, `startTime`, `endTime`, `isBillable`. For "start time + duration", the **frontend** calculates `endTime` (P15) | US-ENTRY-01 |
 | PUT | `/time-entries/{id}` | Edit any field. Changing `title` moves the entry to another task | US-ENTRY-03, US-ORG-05 |
 | DELETE | `/time-entries/{id}?version=` | Delete. Removes the task if it was the last entry | US-ENTRY-03 |
