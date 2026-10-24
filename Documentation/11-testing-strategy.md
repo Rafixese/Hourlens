@@ -1,6 +1,6 @@
 # 11 · Testing strategy
 
-> **Status: draft for review** · Last updated: 2026-10-24
+> **Status: approved** · Last updated: 2026-10-24
 >
 > What is tested, where, and with which tools. All decisions below were made by the owner. Tests are written by the owner as part of each issue ([10](10-development-guide.md), 1.1).
 

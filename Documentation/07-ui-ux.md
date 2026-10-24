@@ -117,7 +117,7 @@ One screen with tabs (U2):
 |------|--------|
 | Clock | **24-hour**, `09:00` |
 | Money | **Polish style**: `1 234,50 PLN` |
-| Durations | `7:30` in lists and timers, `7.5 h` in reports (U13) |
+| Durations | Clock style everywhere: `7:30`, `125:00`. Decimal hours (`7.5 h`) only where decimals read better, such as quota settings (U13, refined in 08 R11) |
 | Dates | `24.10.2026` (U12) |
 | Week start | Monday (02, NFR-06) |
 

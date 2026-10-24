@@ -185,7 +185,8 @@
 - For each client with a quota, the app calculates required hours from quota, workdays, holidays and time off.
 - Billable and non-billable hours both count.
 - A monthly quota is spread evenly across the month's workdays.
-- Hours worked on a **holiday or non-workday** count as **extra (overtime)**. Overtime is **shown separately** in reports and paid at the **normal rate**.
+- Hours worked on a **holiday or non-workday**, and hours above the day's expected hours on a workday, count as **overtime**, paid at the **normal rate**.
+- Overtime is shown **only in the monthly day-by-day quota report**, as hours above the quota. Time entries and total reports show the hours as worked. *(Clarified in 03.)*
 - The balance is per month and does not carry over.
 
 ## 10. Time off (OFF)

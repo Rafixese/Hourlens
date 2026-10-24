@@ -28,7 +28,7 @@
 | A17 | Hosting and CI | Repo on **GitHub**. CI builds and tests every pull request |
 | A18 | Live update scope | **Every change** is pushed to the user's open devices |
 | A19 | Image tags | Every merge to `main` publishes **`latest`** |
-| A20 | Reverse proxy | **Nginx on the host**. The app is bound to `127.0.0.1` |
+| A20 | Reverse proxy | **Nginx on the host** by default (app bound to `127.0.0.1`). Nginx on another server is supported via `HOURLENS_BIND` and `HOURLENS_TRUSTED_PROXIES` (09, S9) |
 | A21 | Background jobs | **Inside the app** (hosted services), no job library |
 | A22 | App port | **8080** by default, changeable in `.env` |
 
@@ -127,7 +127,7 @@ frontend/
 
 | Service | Image | Notes |
 |---------|-------|-------|
-| `app` | `ghcr.io/<owner>/hourlens` | .NET app with the React build inside. Published on host port **8080** by default, **configurable in `.env`** in case another service uses it. Bound to **`127.0.0.1`** so only the host Nginx can reach it |
+| `app` | `ghcr.io/<owner>/hourlens` | .NET app with the React build inside. Published on host port **8080** by default, **configurable in `.env`** in case another service uses it. Bound to **`HOURLENS_BIND`**, default `127.0.0.1` so only Nginx on the same server can reach it. Set to the LAN IP when Nginx runs on another server (09, S9) |
 | `db` | `postgres` (version from A15) | Data in a named volume. Not exposed outside the Docker network |
 
 - **Nginx runs on the server itself** (A20), not in a container. It terminates HTTPS and proxies to `app`. It must allow **WebSocket upgrade** for `/hubs/` (SignalR).
@@ -140,6 +140,8 @@ Expected variables, final names to be fixed in 12 Deployment:
 - database name, user and password
 - public URL of the app (used in password reset emails)
 - host port for the app (default `8080`)
+- `HOURLENS_BIND`: address the port is published on (default `127.0.0.1`)
+- `HOURLENS_TRUSTED_PROXIES`: IPs or networks allowed to send forwarded headers (default `127.0.0.1`)
 - log level
 
 SMTP settings are stored in the database through the admin panel, not in `.env`.

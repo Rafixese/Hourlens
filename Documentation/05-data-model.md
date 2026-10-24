@@ -1,8 +1,8 @@
 # 05 · Data model
 
-> **Status: draft, in progress** · Last updated: 2026-10-24
+> **Status: approved** · Last updated: 2026-10-24
 >
-> The PostgreSQL schema behind the entities in [03 Domain model](03-domain-model.md), using the decisions in [04 Architecture](04-architecture.md). Items marked **⏳ M#** wait on an open question, see [Open questions](#7-open-questions).
+> The PostgreSQL schema behind the entities in [03 Domain model](03-domain-model.md), using the decisions in [04 Architecture](04-architecture.md).
 
 ## 1. Conventions
 
@@ -81,11 +81,11 @@ ASP.NET Core Identity's standard tables, renamed to snake_case:
 |--------|------|-------|
 | `id` | uuid, PK | |
 | `user_id` | uuid, FK → users | |
-| `name` | text | ⏳ M16 (unique per user?) |
+| `name` | text | **Unique per user**, ignoring case (M16) |
 | `rate_mode` | text | `default` (use the user's default rate) or `custom` |
 | `rounding_mode` | text | `none`, `down`, `nearest`, `up`. Default `none` |
 | `rounding_step_minutes` | smallint | 1, 15, 30 or 60 |
-| `archived_at` | timestamptz, null | Null = active. ⏳ M20 |
+| `archived_at` | timestamptz, null | Null = active. Set = archived, and records when (M20) |
 
 ### 4.2 `projects`
 
@@ -94,7 +94,7 @@ ASP.NET Core Identity's standard tables, renamed to snake_case:
 | `id` | uuid, PK | |
 | `user_id` | uuid, FK → users | |
 | `client_id` | uuid, FK → clients | Can't change after creation (02, US-ORG-02) |
-| `name` | text | "Default" for the project created with the client. ⏳ M16 (unique per client?) |
+| `name` | text | "Default" for the project created with the client. **Unique per client**, ignoring case (M16) |
 | `archived_at` | timestamptz, null | |
 
 ### 4.3 `tasks`
@@ -169,7 +169,7 @@ Constraints and indexes:
 | `name` | text | |
 | `source` | text | `manual` or `provider` |
 
-- ⏳ M18 (one holiday per date per user?)
+- **Unique `(user_id, date)`**: one holiday per date per user (M18).
 - The yearly refresh job (04, 3.4) checks whether provider holidays exist for the next year.
 
 ### 5.4 `time_off`
@@ -190,16 +190,13 @@ Constraints and indexes:
 
 - `CHECK (end_date >= start_date)`
 - A check constraint ensures exactly the field for the chosen `pay_mode` is filled.
-- ⏳ M19 (can time off ranges of the same client overlap?)
+- **Exclusion constraint**: time off of the same client can't overlap, whatever the type (M19).
+  `EXCLUDE USING gist (client_id WITH =, daterange(start_date, end_date, '[]') WITH &&)`
 
 ## 6. Value formats
 
-- Columns with a fixed set of values (`rate_mode`, `rounding_mode`, `quota_type`, `type`, `pay_mode`, `source`, `theme`): storage type ⏳ M17.
+- Columns with a fixed set of values (`rate_mode`, `rounding_mode`, `quota_type`, `type`, `pay_mode`, `source`, `theme`) are stored as **`text` with a `CHECK` constraint** listing the allowed values (M17). No PostgreSQL enum types.
 
 ## 7. Open questions
 
-- **M16.** Must client names be unique per user, and project names unique per client? *(Yes for both. Two clients called "Acme" would be confusing in pickers and reports.)*
-- **M17.** How should fixed value sets be stored: as `text` with a check constraint, or as PostgreSQL enum types? *(Text + check. It's easier to change in migrations and works smoothly with EF Core.)*
-- **M18.** Only one holiday per date per user? *(Yes.)*
-- **M19.** Should the database block overlapping time off for the same client, e.g. vacation and sick leave on the same day? *(Block it.)*
-- **M20.** Should archiving be stored as a timestamp (`archived_at`, which also records when) or as a yes/no flag? *(Timestamp.)*
+None. All questions were answered on 2026-10-24.

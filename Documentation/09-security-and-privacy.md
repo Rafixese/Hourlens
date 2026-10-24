@@ -1,8 +1,8 @@
 # 09 · Security and privacy
 
-> **Status: draft, two questions open** · Last updated: 2026-10-24
+> **Status: approved** · Last updated: 2026-10-24
 >
-> How Hourlens protects accounts and data. Builds on authentication in [04 Architecture](04-architecture.md) (3.5) and the API in [06](06-api-spec.md). Items marked **⏳ S#** wait on an open question, see [Open questions](#8-open-questions).
+> How Hourlens protects accounts and data. Builds on authentication in [04 Architecture](04-architecture.md) (3.5) and the API in [06](06-api-spec.md).
 
 ## 1. Threat model (short)
 
@@ -27,9 +27,9 @@ Hourlens runs on a homelab server for 1–2 users, behind Nginx with HTTPS, poss
 | — | Passwords hashed by **ASP.NET Core Identity** (PBKDF2) |
 | S4 | Password rules: **8–128 characters**, no forced symbols, and the **most common passwords are rejected** (a built-in list) |
 | S2 | **Lockout:** 5 failed logins → account locked for **15 minutes** |
-| S3 | **Rate limiting per IP and per account** on `/auth/login`, `/auth/forgot-password` and `/auth/reset-password`, e.g. 10 attempts per minute. Over the limit: 429 Too Many Requests |
+| S3, S17 | **Rate limiting per IP and per account** on `/auth/login`, `/auth/forgot-password` and `/auth/reset-password`: **10 attempts per minute**. Over the limit: 429 Too Many Requests |
 | — | Login errors never say whether the email exists. Forgot password always answers 204 (06, section 2) |
-| — | Password reset tokens come from Identity, are single-use and expire after **1 hour** |
+| S17 | Password reset tokens come from Identity, are single-use and expire after **1 hour** |
 | S5 | **No two-factor login in the MVP.** Planned after the MVP (authenticator app) |
 
 ## 4. Sessions
@@ -54,8 +54,8 @@ Hourlens runs on a homelab server for 1–2 users, behind Nginx with HTTPS, poss
 | # | Control |
 |---|---------|
 | — | **HTTPS is terminated by Nginx.** Nginx sets **HSTS** |
-| S9 | The app trusts `X-Forwarded-For` / `X-Forwarded-Proto` **only from the reverse proxy**. ⏳ S9 (Nginx on another server) |
-| S10 | Security headers sent by the app: **Content-Security-Policy** (only own scripts, styles, fonts and the SignalR connection; no inline scripts), `X-Content-Type-Options: nosniff`, `frame-ancestors 'none'` (no framing), `Referrer-Policy: same-origin` |
+| S9 | The app trusts `X-Forwarded-For` / `X-Forwarded-Proto` **only from the reverse proxy**, configured in `.env`: **`HOURLENS_TRUSTED_PROXIES`** (IPs or networks, default `127.0.0.1`). **`HOURLENS_BIND`** sets the address the app port is published on (default `127.0.0.1`; the server's LAN IP when Nginx runs on another server). With Nginx elsewhere, the traffic between Nginx and the app is plain HTTP on the LAN, so it should stay on a trusted network |
+| S10 | Security headers sent by the app: **Content-Security-Policy** (only own scripts, styles, fonts and the SignalR connection; no inline scripts), `X-Content-Type-Options: nosniff`, `frame-ancestors 'none'` (no framing), `Referrer-Policy: same-origin` (S17) |
 | — | React escapes all output by default. No raw HTML from user input is ever rendered |
 
 ## 7. Privacy
@@ -87,9 +87,4 @@ Hourlens runs on a homelab server for 1–2 users, behind Nginx with HTTPS, poss
 
 ## 8. Open questions
 
-- **S9.** Nginx might run on another server. Proposal: two `.env` settings.
-  - **`HOURLENS_BIND`**: the address the app port is published on. Default `127.0.0.1` (Nginx on the same server). Set it to the server's LAN IP when Nginx runs elsewhere.
-  - **`HOURLENS_TRUSTED_PROXIES`**: the IP addresses or networks allowed to send forwarded headers. Default `127.0.0.1`. Set it to the Nginx server's IP otherwise.
-  
-  This also changes 04 (6.1), which currently says the app is always bound to `127.0.0.1`.
-- **S17.** Details filled in by Claude, to confirm: password reset links expire after **1 hour**; the rate limit is **10 attempts per minute** per IP and per account; `Referrer-Policy: same-origin`.
+None. All questions were answered on 2026-10-24.

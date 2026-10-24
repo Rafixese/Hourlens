@@ -1,6 +1,6 @@
 # 08 · Reports and analytics
 
-> **Status: draft for final review** · Last updated: 2026-10-24
+> **Status: approved** · Last updated: 2026-10-24
 >
 > What each tab of the **Insights** screen ([07](07-ui-ux.md), section 4) shows and how its numbers are produced. Calculation rules come from [03 Domain model](03-domain-model.md), section 4. Endpoints are in [06 API spec](06-api-spec.md), section 9. All decisions below were made by the owner.
 
@@ -99,9 +99,9 @@ As specified in 02, US-ORG-07:
 - The Application layer loads the data for the requested range in a few queries (entries by `(user_id, entry_date)`, 05) and passes it to the Domain functions.
 - Each Insights tab is one API call (06, section 9). When a SignalR "changed" message arrives (06, section 10), the open tab refetches.
 
-## 8. Details to confirm
+## 8. Details confirmed
 
-These details follow from the decisions above but were filled in by Claude. They need the owner's OK:
+Filled in by Claude and confirmed by the owner on 2026-10-24:
 
 - **C1.** Summary grouping thresholds: by day up to 31 days, by month above that, by year for ranges of several years.
 - **C2.** Clicking a client row on the Overview opens the Quota tab for that client.

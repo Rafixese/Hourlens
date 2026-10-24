@@ -1,8 +1,8 @@
 # 06 · API spec
 
-> **Status: draft, in progress** · Last updated: 2026-10-24
+> **Status: approved** · Last updated: 2026-10-24
 >
-> The REST API between the React app and the .NET backend. **The generated OpenAPI document is the source of truth** for exact request and response schemas (04, A6). This document lists the endpoints, conventions and key examples. Items marked **⏳ P#** wait on an open question, see [Open questions](#12-open-questions).
+> The REST API between the React app and the .NET backend. **The generated OpenAPI document is the source of truth** for exact request and response schemas (04, A6). This document lists the endpoints, conventions and key examples.
 
 ## 1. Conventions
 
@@ -17,7 +17,7 @@
 | P9 | **All calculations happen on the server.** The frontend only displays results |
 | P10 | Editable resources return a **`version`** field. Updates and deletes must send it back. If it changed, the server answers **409 Conflict** ("this changed, reload") |
 | P11 | The TypeScript client and TanStack Query hooks are generated with **orval** |
-| P12 | Interactive API docs only in **development**. ⏳ P13 (which tool) |
+| P12, P13 | Interactive API docs with **Scalar**, only in **development** |
 | — | Authentication by **session cookie** (04, A7). All endpoints except setup, login and password reset require a logged-in user |
 | — | IDs are UUID v7 strings (05, M1) |
 
@@ -31,7 +31,7 @@
 | 400 Bad Request | Validation failed (Problem Details with `errors` per field) |
 | 401 Unauthorized | Not logged in |
 | 403 Forbidden | Logged in but not allowed (e.g. a user calling an admin endpoint) |
-| 404 Not Found | Resource doesn't exist ⏳ P14 (also for another user's data?) |
+| 404 Not Found | Resource doesn't exist, **or belongs to another user** (P14). The API never reveals that another user's ID exists |
 | 409 Conflict | `version` mismatch, duplicate name, overlapping period, or a timer already running |
 
 ## 2. Setup and authentication
@@ -93,14 +93,14 @@ There is no "create task" endpoint. Tasks are created from entry titles (03, sec
 | GET | `/timer` | The running timer, or 204 if none | US-TIMER-03 |
 | POST | `/timer/start` | `projectId`, `title`, `isBillable`. 409 if a timer is already running | US-TIMER-01, 02 |
 | POST | `/timer/stop` | `version`. Saves the entry, applies the client's rounding | US-TIMER-04 |
-| PUT | `/timer` | Change title, project or billable flag of the running timer | ⏳ P16 |
+| PUT | `/timer` | Change title, project or billable flag of the running timer without stopping it (P16) | US-TIMER-01 |
 
 ## 7. Time entries
 
 | Method | Path | Purpose | Story |
 |--------|------|---------|-------|
 | GET | `/time-entries?from=&to=` | Entries in a date range, with `clientId`, `projectId`, `taskTitle`, `durationMinutes` | US-ENTRY-05 |
-| POST | `/time-entries` | `projectId`, `title`, `date`, `startTime`, `endTime`, `isBillable` ⏳ P15 | US-ENTRY-01 |
+| POST | `/time-entries` | `projectId`, `title`, `date`, `startTime`, `endTime`, `isBillable`. For "start time + duration", the **frontend** calculates `endTime` (P15) | US-ENTRY-01 |
 | PUT | `/time-entries/{id}` | Edit any field. Changing `title` moves the entry to another task | US-ENTRY-03, US-ORG-05 |
 | DELETE | `/time-entries/{id}?version=` | Delete. Removes the task if it was the last entry | US-ENTRY-03 |
 | GET | `/time-entries/defaults` | `{ "isBillable": true }`, the value from the user's last entry | US-TIMER-01 |
@@ -203,7 +203,4 @@ POST /api/v1/timer/start
 
 ## 12. Open questions
 
-- **P13.** Which API docs tool in development: **Scalar** or **Swagger UI**? *(Scalar. It plugs into .NET's built-in OpenAPI support and has a cleaner UI.)*
-- **P14.** When a user requests another user's data by ID, answer **404 Not Found** (as if it doesn't exist) or **403 Forbidden**? *(404, so IDs of other users' data can't be probed.)*
-- **P15.** "Start time + duration" entry (02, US-ENTRY-01): should the API accept `durationMinutes` as an alternative to `endTime`, or should the frontend calculate the end time and always send `endTime`? *(Frontend calculates. One way in keeps the API simple.)*
-- **P16.** Can the running timer's title, project or billable flag be changed while it runs? *(Yes. Fixing a typo without stopping the timer is common.)*
+None. All questions were answered on 2026-10-24.

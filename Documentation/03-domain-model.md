@@ -1,8 +1,8 @@
 # 03 · Domain model and glossary
 
-> **Status: draft, in progress** · Last updated: 2026-10-22
+> **Status: approved** · Last updated: 2026-10-22
 >
-> The entities, their relationships and the calculation rules behind [01 Vision and scope](01-vision-and-scope.md) and [02 Requirements](02-requirements.md). Only the project owner's decisions are written here. Items marked **⏳ D#** wait on an open question, see [Open questions](#6-open-questions).
+> The entities, their relationships and the calculation rules behind [01 Vision and scope](01-vision-and-scope.md) and [02 Requirements](02-requirements.md). Only the project owner's decisions are written here.
 >
 > This document describes the business concepts. The database tables are designed in 05 Data model.
 
@@ -127,7 +127,7 @@ A **time off day** is a quota workday that is covered by the client's time off. 
 ### 4.4 Expected hours per day
 - **Daily quota:** the quota hours.
 - **Monthly quota:** monthly hours ÷ the number of quota workdays in that month. A holiday doesn't reduce the monthly total: 160 h stays 160 h, spread over fewer days.
-- Contract starting or ending mid-month with a monthly quota: ⏳ D7.
+- Contract starting or ending mid-month with a monthly quota: the monthly hours are **prorated** by quota workdays. *Example:* the contract covers 8 of the month's 20 workdays, so 160 h × 8 ÷ 20 = 64 h required. The expected hours per day stay 160 ÷ 20 = 8 h.
 
 ### 4.5 Required hours, balance and overtime
 - **Required hours** (month) = sum of expected hours over the quota workdays **minus** expected hours on time off days.
@@ -136,7 +136,8 @@ A **time off day** is a quota workday that is covered by the client's time off. 
 - **Hours counted towards the quota:** all the client's entries, both billable and non-billable.
 - **Overtime:**
   - all hours worked on a non-workday or holiday
-  - on a workday, hours above that day's expected hours ⏳ D21 (confirm)
+  - on a workday, hours above that day's expected hours (e.g. 9 h worked with a 7.5 h daily quota = 1.5 h overtime)
+- Overtime is **only a view in the monthly day-by-day quota report**, shown as hours above the quota. Everywhere else (time entries, total reports) the hours are shown as worked: 9 h stays 9 h.
 - **Quota balance** = hours counted − required hours. **Overtime is included.**
   - *Example:* required 150 h, worked 145 h on workdays and 10 h on a Saturday. Balance **+5 h**, with 10 h overtime shown separately.
 - The balance is per month and doesn't carry over.
@@ -152,7 +153,8 @@ A **time off day** is a quota workday that is covered by the client's time off. 
   - **fixed hours:** fixed hours × rate
   - **fixed amount:** the amount entered
 - Unpaid time off has value 0.
-- Time off **reduces required hours**. In reports it is shown as its own line (paid leave or sick) and **is included in the totals**. ⏳ D19 (balance)
+- Time off **reduces required hours**. In reports it is shown as its own line (paid leave or sick) and **is included in the totals**.
+- For the quota balance, time off is **not** counted as worked hours, because it already reduced the required hours. It is never counted twice.
 
 ### 4.7 Earnings and salary
 - **Earnings** = sum over billable entries of hours × rate. Totals are **per currency**, with no conversion.
@@ -160,9 +162,10 @@ A **time off day** is a quota workday that is covered by the client's time off. 
 
 ### 4.8 Predicted salary
 - Only for clients **with a quota**. Clients without a quota have no prediction.
-- Predicted salary = salary so far + expected pay for the remaining quota workdays of the month, **including today**, + planned paid time off for the rest of the month.
-- Whether the prediction assumes you catch up on missing hours: ⏳ D12.
-- How today is counted: ⏳ D20.
+- The app shows **two predictions side by side**:
+  - **At normal pace:** salary so far + expected hours for the remaining quota workdays × rate + planned paid time off for the rest of the month. Missing hours from earlier days are not made up.
+  - **If you catch up:** as above, plus the hours you're currently behind quota × rate. If you're at or above quota, it equals the normal pace prediction.
+- The remaining quota workdays **include today**. Hours already worked today are in salary so far, so today only adds the hours still missing to reach today's expected hours.
 
 ## 5. Constraints to keep in the design
 
@@ -171,8 +174,4 @@ A **time off day** is a quota workday that is covered by the client's time off. 
 
 ## 6. Open questions
 
-- **D7.** Contract starting mid-month with a monthly quota: full monthly hours, or a share based on workdays?
-- **D12.** Predicted salary: assume catching up, normal pace, or let the user choose?
-- **D19.** Time off counts in report totals. For the quota balance, time off only reduces required hours and isn't also counted as worked hours, so it isn't counted twice. Confirm?
-- **D20.** Today in predicted salary: today's hours already worked are in "salary so far", so today adds only the hours still missing to reach today's expected hours. Confirm?
-- **D21.** Overtime on a normal workday: e.g. 9 h worked with a 7.5 h daily quota gives 1.5 h overtime. Confirm? (Your "yes" to D8 could be read either way.)
+None. All questions were answered on 2026-10-22.

@@ -1,6 +1,6 @@
 # 13 · Roadmap
 
-> **Status: draft for review** · Last updated: 2026-10-24
+> **Status: approved** · Last updated: 2026-10-24
 >
 > The path from an empty repo to the MVP defined in [01](01-vision-and-scope.md). Built by the owner with Claude Code, about **5–10 hours a week**. The roadmap gives the **order** only, no dates (RM2).
 
@@ -163,7 +163,7 @@ Tasks:
 
 Candidates, to be prioritised later (RM8): several simultaneous timers, two-factor login, SSO (OIDC), CSV/PDF/XLSX export, half-day and hourly time off, weekly grid view, comparison with previous periods, keyboard shortcuts, Clockify import, mobile app, more time off types.
 
-## 4. Open questions
+## 4. Tracking on GitHub
 
-- **RM10.** Should GitHub Milestones M0–M7 group the issues, so each milestone shows its progress? *(Yes.)*
-- **RM11.** Should I create the GitHub issues from the task lists above once this roadmap is approved? That needs the repository connected to this project.
+- **RM10.** Issues are grouped into **GitHub Milestones M0–M7**, one per milestone above.
+- **RM11.** The issues are created from the task lists above in [Rafixese/Hourlens](https://github.com/Rafixese/Hourlens).

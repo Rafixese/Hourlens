@@ -1,6 +1,6 @@
 # 10 · Development guide
 
-> **Status: draft for review** · Last updated: 2026-10-24
+> **Status: approved** · Last updated: 2026-10-24
 >
 > How Hourlens is developed: how we work together, local setup, Git workflow and code conventions. Built by the owner with Claude as a mentor, about 5–10 hours a week (13, RM1).
 

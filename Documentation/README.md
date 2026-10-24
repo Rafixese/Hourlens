@@ -58,7 +58,7 @@ Written just ahead of the feature work that needs them, so they stay accurate.
 | # | Document | Purpose | Key contents |
 |---|----------|---------|--------------|
 | 10 | [Development guide](10-development-guide.md) ✅ approved | How to work in the repo | Local setup (Docker Compose for dev), branching (`main` / `dev` / feature branches), coding conventions per language, commit style, PR checklist |
-| 11 | [Testing strategy](11-testing-strategy.md) 📝 draft | What gets tested and how | Unit / integration / end-to-end split, tools per stack (xUnit, pytest, Vitest, Playwright), test data, CI gates |
+| 11 | [Testing strategy](11-testing-strategy.md) ✅ approved | What gets tested and how | Unit / integration / end-to-end split, tools per stack (xUnit, Testcontainers, Vitest, Playwright), test data, CI gates |
 | 12 | Deployment and operations | Running it in a homelab | Docker Compose for production, configuration and env vars, reverse proxy/TLS, backup and restore, upgrades and migrations, logs and health checks |
 | 13 | [Roadmap](13-roadmap.md) ✅ approved | Path from zero to MVP and beyond | Milestones with "done" criteria, MVP cut line, post-MVP ideas (mobile, integrations, invoicing, Clockify import) |
 
@@ -71,4 +71,4 @@ Written just ahead of the feature work that needs them, so they stay accurate.
 
 Agreed 2026-10-22: the MVP uses one backend, **.NET**, for the API, reports and exports. PostgreSQL handles the aggregations, and .NET libraries cover CSV/PDF/XLSX export. One fewer service keeps the homelab deployment simple.
 
-Python stays an option for later if a real need appears (heavier analytics, a data import tool, scheduled jobs). If that happens, the change will be recorded as an ADR.
+Python stays an option for later if a real need appears (heavier analytics, a data import tool, scheduled jobs). If that happens, the change will be recorded as an ADR (13, RM9).
